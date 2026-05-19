@@ -259,36 +259,29 @@ const TermsOfService = () => {
         </LegalSection>
 
         <LegalSection title="12. Security">
-          <Text>
-            CoverLetterGPT does not process any order payments directly through the website. 
-            All payments are processed securely through Stripe, a third party online 
-            payment provider. When processing payments:
+          <Text as="p" fontSize="md" mt={2}>
+            All payments are processed securely through PayMongo, a third party online 
+            payment provider. We do not store or have access to your full credit card 
+            details. 
           </Text>
-          <UnorderedList spacing={2} pl={5}>
+          <Box as="ul" pl={5} mt={2}>
             <ListItem>
-              Your payment information is never stored on our servers
+              All payment transactions are encrypted and processed securely by PayMongo
             </ListItem>
             <ListItem>
-              All payment transactions are encrypted and processed securely by Stripe
+              PayMongo employs strict security protocols to ensure your data is safe.
             </ListItem>
             <ListItem>
-              Stripe is a PCI Service Provider Level 1, which is the highest grade of 
-              payment processing security
-            </ListItem>
-            <ListItem>
-              For more information about Stripe's security measures, please visit 
+              For more information about PayMongo's security measures, please visit {" "}
               <Link 
-                href="https://stripe.com/docs/security" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                color="purple.600"
-                _hover={{ color: 'purple.800' }}
-                ml={1}
+                href="https://paymongo.com" 
+                color="blue.500" 
+                isExternal
               >
-                Stripe's Security Documentation
+                PayMongo's Website
               </Link>
             </ListItem>
-          </UnorderedList>
+          </Box>
         </LegalSection>
       </VStack>
     </BorderBox>

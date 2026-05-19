@@ -73,7 +73,7 @@ const PrivacyPolicy = () => {
               <UnorderedList ml={6} mt={2} spacing={2}>
                 <ListItem>Payment history</ListItem>
                 <ListItem>Subscription status</ListItem>
-                <ListItem>Note: Payment processing is handled by Stripe</ListItem>
+                <ListItem>Note: Payment processing is handled by PayMongo</ListItem>
               </UnorderedList>
             </ListItem>
           </UnorderedList>
@@ -161,8 +161,8 @@ const PrivacyPolicy = () => {
           <Text mb={4}>We share your data with the following third parties:</Text>
           <UnorderedList spacing={4} mb={4}>
             <ListItem>
-              <Text fontWeight='semibold' as='span'>Stripe: </Text>
-              For payment processing
+              <Text fontWeight='semibold' as='span'>PayMongo: </Text>
+              Our payment processor, which collects necessary billing information.
             </ListItem>
             <ListItem>
               <Text fontWeight='semibold' as='span'>OpenAI: </Text>

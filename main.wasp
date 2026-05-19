@@ -137,18 +137,8 @@ action deleteJob {
   entities: [Job]
 }
 
-action stripePayment {
-  fn: import { stripePayment } from "@src/server/actions.js",
-  entities: [User]
-}
-
-action stripeGpt4Payment {
-  fn: import { stripeGpt4Payment } from "@src/server/actions.js",
-  entities: [User]
-}
-
-action stripeCreditsPayment {
-  fn: import { stripeCreditsPayment } from "@src/server/actions.js",
+action createPaymongoCheckout {
+  fn: import { createPaymongoCheckout } from "@src/server/actions.js",
   entities: [User]
 }
 
@@ -211,10 +201,10 @@ query getCoverLetterCount {
  * https://wasp.sh/docs/language/features#apis
  */
 
-api stripeWebhook {
-  fn: import { stripeWebhook } from "@src/server/webhooks.js",
+api paymongoWebhook {
+  fn: import { paymongoWebhook } from "@src/server/webhooks.js",
   entities: [User],
-  httpRoute: (POST, "/stripe-webhook")
+  httpRoute: (POST, "/paymongo-webhook")
 }
 
 api lnLogin {

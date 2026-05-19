@@ -5,20 +5,18 @@ import {
   type CreateJob,
   type UpdateCoverLetter,
   type EditCoverLetter,
-  type GenerateEdit,
   type UpdateJob,
   type UpdateUser,
   type DeleteJob,
-  type StripePayment,
-  type StripeGpt4Payment,
-  type StripeCreditsPayment,
+  type GenerateEdit,
+  type CreatePaymongoCheckout,
 } from "wasp/server/operations";
 import fetch from 'node-fetch';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_KEY!, {
-  apiVersion: '2023-08-16',
-});
+const PAYMONGO_SECRET_KEY = process.env.PAYMONGO_SECRET_KEY!;
+const paymongoHeaders = {
+  'Content-Type': 'application/json',
+  Authorization: `Basic ${Buffer.from(PAYMONGO_SECRET_KEY || '').toString('base64')}`,
+};
 
 const DOMAIN = process.env.WASP_WEB_CLIENT_URL || 'http://localhost:3000';
 
@@ -419,7 +417,7 @@ export const updateUser: UpdateUser<UpdateUserArgs, UserWithoutPassword> = async
       datePaid: true,
       notifyPaymentExpires: true,
       checkoutSessionId: true,
-      stripeId: true,
+      paymongoId: true,
       credits: true,
       gptModel: true,
       isUsingLn: true,
@@ -436,177 +434,96 @@ function dontUpdateUser(user: UserWithoutPassword): Promise<UserWithoutPassword>
   });
 }
 
-type StripePaymentResult = {
+type PaymongoPaymentResult = {
   sessionUrl: string | null;
   sessionId: string;
 };
 
-export const stripePayment: StripePayment<void, StripePaymentResult> = async (_args, context) => {
+export const createPaymongoCheckout: CreatePaymongoCheckout<{ tier: string }, PaymongoPaymentResult> = async ({ tier }, context) => {
   if (!context.user || !context.user.email) {
     throw new HttpError(401, 'User or email not found');
   }
-  let customer: Stripe.Customer;
-  const stripeCustomers = await stripe.customers.list({
-    email: context.user.email,
-  });
-  if (!stripeCustomers.data.length) {
-    console.log('creating customer');
-    customer = await stripe.customers.create({
-      email: context.user.email,
-    });
+
+  let amount = 0;
+  let credits = 0;
+  let name = '';
+  let description = '';
+
+  if (tier === 'tester') {
+    amount = 7900; // PHP 79.00
+    credits = 5;
+    name = 'The Tester';
+    description = '5 ATS-Optimized Cover Letters';
+  } else if (tier === 'hunter') {
+    amount = 19900; // PHP 199.00
+    credits = 20;
+    name = 'The Job Hunter';
+    description = '20 ATS-Optimized Cover Letters';
+  } else if (tier === 'aggressive') {
+    amount = 34900; // PHP 349.00
+    credits = 45;
+    name = 'The Aggressive Freelancer';
+    description = '45 ATS-Optimized Cover Letters';
   } else {
-    console.log('using existing customer');
-    customer = stripeCustomers.data[0];
+    throw new HttpError(400, 'Invalid tier selected');
   }
 
-  const session: Stripe.Checkout.Session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: process.env.PRODUCT_PRICE_ID!,
-        quantity: 1,
+  const payload = {
+    data: {
+      attributes: {
+        billing: {
+          email: context.user.email,
+        },
+        send_email_receipt: true,
+        show_description: true,
+        show_line_items: true,
+        line_items: [
+          {
+            currency: 'PHP',
+            amount,
+            description,
+            name,
+            quantity: 1,
+          },
+        ],
+        payment_method_types: ['gcash', 'paymaya', 'qrph', 'card'],
+        success_url: `${DOMAIN}/profile?success=true`,
+        cancel_url: `${DOMAIN}/profile?canceled=true`,
+        description: `CoverLetterGPT - ${name}`,
+        metadata: {
+          userId: context.user.id.toString(),
+          credits: credits.toString(),
+          tier
+        }
       },
-    ],
-    mode: 'subscription',
-    success_url: `${DOMAIN}/checkout?success=true`,
-    cancel_url: `${DOMAIN}/checkout?canceled=true`,
-    automatic_tax: { enabled: true },
-    customer_update: {
-      address: 'auto',
     },
-    customer: customer.id,
+  };
+
+  const response = await fetch('https://api.paymongo.com/v1/checkout_sessions', {
+    method: 'POST',
+    headers: paymongoHeaders,
+    body: JSON.stringify(payload),
   });
+
+  const session = (await response.json()) as any;
+
+  if (!session || session.errors) {
+    console.error(session.errors);
+    throw new HttpError(402, 'Could not create a PayMongo checkout session');
+  }
 
   await context.entities.User.update({
     where: {
       id: context.user.id,
     },
     data: {
-      checkoutSessionId: session?.id ?? null,
-      stripeId: customer.id ?? null,
+      checkoutSessionId: session.data.id ?? null,
+      paymongoId: session.data.id ?? null,
     },
   });
 
-  return new Promise((resolve, reject) => {
-    if (!session) {
-      reject(new HttpError(402, 'Could not create a Stripe session'));
-    } else {
-      resolve({
-        sessionUrl: session.url,
-        sessionId: session.id,
-      });
-    }
-  });
-};
-
-export const stripeGpt4Payment: StripeGpt4Payment<void, StripePaymentResult> = async (_args, context) => {
-  if (!context.user || !context.user.email) {
-    throw new HttpError(401, 'User or email not found');
-  }
-  let customer: Stripe.Customer;
-  const stripeCustomers = await stripe.customers.list({
-    email: context.user.email,
-  });
-  if (!stripeCustomers.data.length) {
-    console.log('creating customer');
-    customer = await stripe.customers.create({
-      email: context.user.email,
-    });
-  } else {
-    console.log('using existing customer');
-    customer = stripeCustomers.data[0];
-  }
-
-  const session: Stripe.Checkout.Session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: process.env.GPT4_PRICE_ID!,
-        quantity: 1,
-      },
-    ],
-    mode: 'subscription',
-    success_url: `${DOMAIN}/checkout?success=true`,
-    cancel_url: `${DOMAIN}/checkout?canceled=true`,
-    automatic_tax: { enabled: true },
-    customer_update: {
-      address: 'auto',
-    },
-    customer: customer.id,
-  });
-
-  await context.entities.User.update({
-    where: {
-      id: context.user.id,
-    },
-    data: {
-      checkoutSessionId: session?.id ?? null,
-      stripeId: customer.id ?? null,
-    },
-  });
-
-  return new Promise((resolve, reject) => {
-    if (!session) {
-      reject(new HttpError(402, 'Could not create a Stripe session'));
-    } else {
-      resolve({
-        sessionUrl: session.url,
-        sessionId: session.id,
-      });
-    }
-  });
-};
-
-export const stripeCreditsPayment: StripeCreditsPayment<void, StripePaymentResult> = async (_args, context) => {
-  if (!context.user || !context.user.email) {
-    throw new HttpError(401, 'User or email not found');
-  }
-  let customer: Stripe.Customer;
-  const stripeCustomers = await stripe.customers.list({
-    email: context.user.email,
-  });
-  if (!stripeCustomers.data.length) {
-    console.log('creating customer');
-    customer = await stripe.customers.create({
-      email: context.user.email,
-    });
-  } else {
-    console.log('using existing customer');
-    customer = stripeCustomers.data[0];
-  }
-
-  const session: Stripe.Checkout.Session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: process.env.PRODUCT_CREDITS_PRICE_ID!,
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    success_url: `${DOMAIN}/checkout?credits=true`,
-    cancel_url: `${DOMAIN}/checkout?canceled=true`,
-    automatic_tax: { enabled: true },
-    customer_update: {
-      address: 'auto',
-    },
-    customer: customer.id,
-  });
-
-  await context.entities.User.update({
-    where: {
-      id: context.user.id,
-    },
-    data: {
-      stripeId: customer.id ?? null,
-    },
-  });
-
-  return new Promise((resolve, reject) => {
-    if (!session) {
-      reject(new HttpError(402, 'Could not create a Stripe session'));
-    } else {
-      resolve({
-        sessionUrl: session.url,
-        sessionId: session.id,
-      });
-    }
-  });
+  return {
+    sessionUrl: session.data.attributes.checkout_url,
+    sessionId: session.data.id,
+  };
 };

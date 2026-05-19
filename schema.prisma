@@ -15,7 +15,7 @@ model User {
   isUsingLn            Boolean       @default(false)
   gptModel             String        @default("gpt-4o-mini")
   datePaid             DateTime?
-  stripeId             String?
+  paymongoId           String?
   checkoutSessionId    String?
   subscriptionStatus   String?
   notifyPaymentExpires Boolean       @default(false)

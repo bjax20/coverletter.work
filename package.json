@@ -5,6 +5,7 @@
     "@chakra-ui/react": "2.8.0",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
+    "@sendgrid/mail": "^8.1.6",
     "@types/pdfjs-dist": "2.10.378",
     "bolt11": "1.4.1",
     "framer-motion": "6.5.1",
@@ -16,7 +17,6 @@
     "react": "^18.2.0",
     "react-hook-form": "^7.45.4",
     "react-icons": "4.8.0",
-    "stripe": "13.3.0",
     "wasp": "file:.wasp/out/sdk/wasp",
     "zod": "^3.22.4"
   },

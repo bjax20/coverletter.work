@@ -1,8 +1,8 @@
 // =============================== IMPORTANT =================================
 //
-// This file is only used for Wasp IDE support. You can change it to configure
-// your IDE checks, but none of these options will affect the TypeScript
-// compiler. Proper TS compiler configuration in Wasp is coming soon :)
+// This file is used for Wasp IDE support. You can change it to configure
+// your IDE checks. Proper TS compiler configuration in Wasp requires specific 
+// options to prevent build pipeline breaks.
 {
   "compilerOptions": {
     "module": "esnext",
@@ -10,6 +10,10 @@
     // We're bundling all code in the end so this is the most appropriate option,
     // it's also important for autocomplete to work properly.
     "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "composite": true,
+    "skipLibCheck": true,
     // JSX support
     "jsx": "preserve",
     "strict": true,
@@ -28,10 +32,8 @@
       // Source 2: https://github.com/testing-library/jest-dom/issues/546#issuecomment-1889884843
       "node_modules/@types"
     ],
-    // Since this TS config is used only for IDE support and not for
-    // compilation, the following directory doesn't exist. We need to specify
-    // it to prevent this error:
-    // https://stackoverflow.com/questions/42609768/typescript-error-cannot-write-file-because-it-would-overwrite-input-file
-    "outDir": ".wasp/phantom"
-  }
+    // Updated from .wasp/phantom to satisfy the new compiler framework specifications
+    "outDir": ".wasp/out/user"
+  },
+  "include": ["src"]
 }

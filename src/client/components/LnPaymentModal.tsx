@@ -44,7 +44,7 @@ export default function LnPaymentModal({ lightningInvoice, isOpen, onClose }: In
   const [isPaying, setIsPaying] = useState(false);
   const [amountCents, setAmountCents] = useState<number | null>(null);
 
-  const copyButtonRef = useRef(null);
+  const copyButtonRef = useRef<any>(null);
 
   const handleCopyClick = () => {
     if (lightningInvoice) {

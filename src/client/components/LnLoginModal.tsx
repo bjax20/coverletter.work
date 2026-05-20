@@ -24,7 +24,7 @@ type LoginModalProps = {
 };
 
 export default function LoginModal({ status, encodedUrl, isOpen, onClose, handleWalletClick }: LoginModalProps) {
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<any>(null);
 
   const handleCopyClick = () => {
     if (encodedUrl) {

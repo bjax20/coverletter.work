@@ -3,7 +3,7 @@ import { useQuery, getUserInfo } from "wasp/client/operations";
 import BorderBox from './components/BorderBox';
 import { Heading, Text, Spinner } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 type UpdateUserResult = Pick<User, 'id' | 'email' | 'hasPaid'>;
 type PaymentStatus = 'paid' | 'canceled' | 'error' | 'loading';

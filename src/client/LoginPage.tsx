@@ -5,7 +5,7 @@ import { BsCurrencyBitcoin } from 'react-icons/bs';
 import { VStack, Button, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import BorderBox from './components/BorderBox';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import LnLoginModal from './components/LnLoginModal';
 
 export default function Login() {

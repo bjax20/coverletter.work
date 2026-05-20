@@ -17,7 +17,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
 import { AiOutlineLogin } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
@@ -35,7 +35,7 @@ export function LeaveATip({
   onClose: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const tipRef = useRef(null);
+  const tipRef = useRef<any>(null);
 
   const navigate = useNavigate();
   const handleClick = async () => {
@@ -93,7 +93,7 @@ export function LeaveATip({
 
 export function LoginToBegin({ isOpen, onClose }: { isOpen: boolean; onOpen: () => void; onClose: () => void }) {
   const navigate = useNavigate();
-  const loginRef = useRef(null);
+  const loginRef = useRef<any>(null);
 
   const handleClick = async () => {
     navigate('/login');
@@ -131,7 +131,7 @@ export function DeleteJob({
   onOpen: () => void;
   onClose: () => void;
 }) {
-  const cancelRef = useRef(null);
+  const cancelRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   return (
@@ -183,7 +183,7 @@ export function EditAlert({ coverLetter }: { coverLetter: boolean }) {
     }
   }, [coverLetter]);
 
-  const cancelRef = useRef(null);
+  const cancelRef = useRef<any>(null);
   function handleCheckboxChange(e: any) {
     if (e.target.checked) {
       localStorage.setItem('edit-alert', 'do not show');

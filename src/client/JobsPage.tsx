@@ -30,7 +30,7 @@ import {
 import ModalElement from './components/Modal';
 import DescriptionModal from './components/DescriptionModal';
 import BorderBox from './components/BorderBox';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { DeleteJob } from './components/AlertDialog';
 import { FiDelete } from 'react-icons/fi';
 

@@ -21,7 +21,7 @@ type DescriptionModalProps = {
 export default function DescriptionModal({ description, isOpen, onClose, onOpen }: DescriptionModalProps) {
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const copyButtonRef = useRef(null);
+  const copyButtonRef = useRef<any>(null);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={copyButtonRef}>

@@ -13,7 +13,7 @@ import {
   StackProps,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { CgProfile } from 'react-icons/cg';
 import { MdWorkOutline } from 'react-icons/md';
 import { AiOutlineMenu } from 'react-icons/ai';

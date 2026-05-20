@@ -1,7 +1,7 @@
 import { type CoverLetter } from "wasp/entities";
 import { editCoverLetter, useQuery, getCoverLetter } from "wasp/client/operations";
 import { Tooltip, Button, Textarea, useClipboard, Spinner, HStack } from '@chakra-ui/react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import BorderBox from './components/BorderBox';
 import { useContext } from 'react';
 import { TextareaContext } from './App';

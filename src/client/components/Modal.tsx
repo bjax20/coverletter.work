@@ -14,7 +14,7 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { AiOutlineEdit } from 'react-icons/ai';
 
 type ModalProps = {
@@ -32,7 +32,7 @@ export default function ModalElement({ coverLetterData, isOpen, onOpen, onClose 
   const navigate = useNavigate();
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const copyButtonRef = useRef(null);
+  const copyButtonRef = useRef<any>(null);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCoverLetterId = e.target.value;

@@ -5,6 +5,7 @@
 // options to prevent build pipeline breaks.
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "module": "esnext",
     "target": "esnext",
     // We're bundling all code in the end so this is the most appropriate option,
@@ -14,6 +15,7 @@
     "isolatedModules": true,
     "composite": true,
     "skipLibCheck": true,
+    "preserveSymlinks": true,
     // JSX support
     "jsx": "preserve",
     "strict": true,
@@ -32,7 +34,6 @@
       // Source 2: https://github.com/testing-library/jest-dom/issues/546#issuecomment-1889884843
       "node_modules/@types"
     ],
-    // Updated from .wasp/phantom to satisfy the new compiler framework specifications
     "outDir": ".wasp/out/user"
   },
   "include": ["src"]

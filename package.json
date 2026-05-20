@@ -2,6 +2,7 @@
   "name": "coverlettergpt",
   "type": "module",
   "workspaces": [
+    ".wasp/build/*",
     ".wasp/out/*",
     ".wasp/out/sdk/wasp"
   ],
@@ -13,28 +14,27 @@
     "@types/pdfjs-dist": "2.10.378",
     "bolt11": "1.4.1",
     "framer-motion": "6.5.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
     "lnurl": "0.24.2",
     "node-fetch": "3.3.0",
     "pdfjs-dist": "3.3.122",
     "qrcode.react": "3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router": "^7.12.0",
+    "react-router-dom": "^6.26.2",
     "react-hook-form": "^7.45.4",
     "react-icons": "4.8.0",
+    "wasp": "file:.wasp/out/sdk/wasp",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/react": "^19.2.7",
+    "@types/react": "^18.0.37",
     "prisma": "5.19.1",
-    "typescript": "5.9.3",
+    "typescript": "5.8.2",
     "vite": "^7.0.6"
   },
-  "wasp": {
-    "overriddenDeps": {
-      "react": "^19.2.1",
-      "react-dom": "^19.2.1"
-    }
+  "overrides": {
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11"
   }
 }

@@ -1,59 +1,19 @@
 import { type User, type LnPayment } from "wasp/entities";
-import { generateEdit, updateLnPayment, useQuery, getUserInfo } from "wasp/client/operations";
-import { VStack, ButtonGroup, Button, ButtonGroupProps, Text, Box, useDisclosure } from '@chakra-ui/react';
-import { useContext, useState } from 'react';
+import { generateEdit, useQuery, getUserInfo } from "wasp/client/operations";
+import { VStack, Button, Box, Text } from '@chakra-ui/react';
+import { useContext } from 'react';
 import { TextareaContext } from '../App';
-import { LeaveATip } from './AlertDialog';
-import LnPaymentModal from './LnPaymentModal';
-import { fetchLightningInvoice } from '../lightningUtils';
-import type { LightningInvoice } from '../lightningUtils';
+import { FiMinimize2, FiMaximize2, FiBriefcase, FiMessageCircle, FiUser } from 'react-icons/fi';
 
-interface EditPopoverProps extends ButtonGroupProps {
+interface EditPopoverProps {
   selectedText?: string;
   setTooltip: any;
   user: Omit<User, 'password'>;
+  [key: string]: any;
 }
 
 export function EditPopover({ setTooltip, selectedText, user, ...props }: EditPopoverProps) {
-  const [lightningInvoice, setLightningInvoice] = useState<LightningInvoice | null>(null);
-  const { textareaState, setTextareaState, setIsLnPayPending } = useContext(TextareaContext);
-
-  const { data: userInfo } = useQuery(getUserInfo, { id: user.id });
-
-  const { isOpen: isPayOpen, onOpen: onPayOpen, onClose: onPayClose } = useDisclosure();
-  const { isOpen: lnPaymentIsOpen, onOpen: lnPaymentOnOpen, onClose: lnPaymentOnClose } = useDisclosure();
-
-  async function checkIfLnAndPay(user: Omit<User, 'password'>): Promise<LnPayment | null> {
-    try {
-      if (user.isUsingLn && user.credits === 0) {
-        const invoice = await fetchLightningInvoice();
-        let lnPayment: LnPayment;
-        if (invoice) {
-          invoice.status = 'pending';
-          lnPayment = await updateLnPayment(invoice);
-          setLightningInvoice(invoice);
-          lnPaymentOnOpen();
-        } else {
-          throw new Error('fetching lightning invoice failed');
-        }
-
-        let status = invoice.status;
-        while (status === 'pending') {
-          lnPayment = await updateLnPayment(invoice);
-          status = lnPayment.status;
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-        if (status !== 'success') {
-          throw new Error('payment failed');
-        }
-        return lnPayment;
-      }
-      return null;
-    } catch (error) {
-      console.error('Error processing payment, please try again');
-      return null;
-    }
-  }
+  const { textareaState, setTextareaState } = useContext(TextareaContext);
 
   const replaceSelectedText = async ({ improvement, lnPayment }: { improvement: string, lnPayment?: LnPayment }) => {
     const selection = window.getSelection();
@@ -101,62 +61,42 @@ export function EditPopover({ setTooltip, selectedText, user, ...props }: EditPo
   };
 
   const handleClick = async (value: string) => {
-    if (!userInfo?.credits && !userInfo?.hasPaid && !user.isUsingLn) {
-      onPayOpen();
-      setTooltip(null);
-      window.getSelection()?.removeAllRanges();
-      return;
-    }
-    let lnPayment: LnPayment | undefined;
-    if (userInfo?.isUsingLn) {
-      if (userInfo.credits > 0) {
-        onPayOpen();
-      }
-      try {
-        const paymentResult = await checkIfLnAndPay(user);
-        lnPayment = paymentResult ?? undefined;
-      } catch (error) {
-        console.error('error paying with ln: ', error);
-      }
-    }
-    replaceSelectedText({ improvement: value, lnPayment });
+    replaceSelectedText({ improvement: value });
     window.getSelection()?.removeAllRanges();
   };
 
   return (
-    <>
-      <VStack {...props} gap={1} bgColor='bg-modal' borderRadius='lg' boxShadow='2xl'>
-        <Box layerStyle='cardLg' p={3}>
-          <Text fontSize='sm' textAlign='center'>
-            🤔 Ask GPT to make this part more..
-          </Text>
-          <ButtonGroup size='xs' p={1} variant='solid' colorScheme='purple' isAttached>
-            <Button size='xs' color='black' fontSize='xs' onClick={() => handleClick('concise')}>
-              Concise
-            </Button>
+    <Box {...props} zIndex={1000} transition="all 0.2s">
+      <Box 
+        bg="white" 
+        borderRadius="xl" 
+        boxShadow="0px 10px 40px rgba(0, 0, 0, 0.15)" 
+        border="1px solid"
+        borderColor="gray.100"
+        _dark={{ bg: "gray.800", borderColor: "whiteAlpha.200" }}
+        overflow="hidden"
+        minW="220px"
+        p={2}
+      >
+        <Text fontSize="xs" fontWeight="700" color="gray.500" _dark={{ color: "whiteAlpha.600" }} px={2} pt={1} pb={2} letterSpacing="wide">
+          🤔 Ask AI to make it...
+        </Text>
+        <VStack align="stretch" spacing={1}>
+          <Button size="sm" variant="ghost" justifyContent="flex-start" fontWeight="500" leftIcon={<FiMinimize2 />} onClick={() => handleClick('concise')} _hover={{ bg: "blue.50", color: "blue.600", _dark: { bg: "whiteAlpha.100", color: "blue.300" } }}>
+            More Concise
+          </Button>
+          <Button size="sm" variant="ghost" justifyContent="flex-start" fontWeight="500" leftIcon={<FiMaximize2 />} onClick={() => handleClick('detailed')} _hover={{ bg: "blue.50", color: "blue.600", _dark: { bg: "whiteAlpha.100", color: "blue.300" } }}>
+            More Detailed
+          </Button>
+          <Button size="sm" variant="ghost" justifyContent="flex-start" fontWeight="500" leftIcon={<FiBriefcase />} onClick={() => handleClick('Professional')} _hover={{ bg: "blue.50", color: "blue.600", _dark: { bg: "whiteAlpha.100", color: "blue.300" } }}>
+            More Professional
+          </Button>
+          <Button size="sm" variant="ghost" justifyContent="flex-start" fontWeight="500" leftIcon={<FiMessageCircle />} onClick={() => handleClick('informal')} _hover={{ bg: "blue.50", color: "blue.600", _dark: { bg: "whiteAlpha.100", color: "blue.300" } }}>
+            More Casual
+          </Button>
 
-            <Button size='xs' color='black' fontSize='xs' onClick={() => handleClick('detailed')}>
-              Detailed
-            </Button>
-
-            <Button size='xs' color='black' fontSize='xs' onClick={() => handleClick('Professional')}>
-              Professional
-            </Button>
-
-            <Button size='xs' color='black' fontSize='xs' onClick={() => handleClick('informal')}>
-              Informal
-            </Button>
-          </ButtonGroup>
-        </Box>
-      </VStack>
-      <LeaveATip
-        isOpen={isPayOpen}
-        onOpen={onPayOpen}
-        onClose={onPayClose}
-        credits={userInfo?.credits || 0}
-        isUsingLn={user?.isUsingLn || false}
-      />
-      <LnPaymentModal isOpen={lnPaymentIsOpen} onClose={lnPaymentOnClose} lightningInvoice={lightningInvoice} />
-    </>
+        </VStack>
+      </Box>
+    </Box>
   );
 }

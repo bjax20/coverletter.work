@@ -22,7 +22,7 @@ const PrivacyPolicy = () => {
 
         <LegalSection title='1. Introduction'>
           <Text>
-            Canger & Shahab Crimpin GbR ("we", "us", or "our") operates CoverLetterGPT. 
+            Latte Tech Industry ("we", "us", or "our") operates lattetechindustry@coverletter.work 
             This page informs you of our policies regarding the collection, use, and 
             disclosure of personal data when you use our Service and the choices you 
             have associated with that data.
@@ -33,11 +33,11 @@ const PrivacyPolicy = () => {
           <Text>
             The data controller for your personal data is:
             <br />
-            Canger & Shahab Crimpin GbR
+            Latte Tech Industry
             <br />
-            Zum Steinberg 12, 69121 Heidelberg, Germany
+            Calamba, Laguna, Philippines
             <br />
-            Email: info.crimpin@gmail.com
+            Email: lattetechindustry@coverletter.work
           </Text>
         </LegalSection>
 
@@ -72,8 +72,7 @@ const PrivacyPolicy = () => {
               <Text fontWeight='semibold'>Payment Data:</Text>
               <UnorderedList ml={6} mt={2} spacing={2}>
                 <ListItem>Payment history</ListItem>
-                <ListItem>Subscription status</ListItem>
-                <ListItem>Note: Payment processing is handled by PayMongo</ListItem>
+                <ListItem>Note: Payment processing is handled securely by PayMongo.</ListItem>
               </UnorderedList>
             </ListItem>
           </UnorderedList>
@@ -137,12 +136,12 @@ const PrivacyPolicy = () => {
           <UnorderedList spacing={2}>
             <ListItem>Account data: As long as your account is active</ListItem>
             <ListItem>Generated content: For as long as necessary to provide our services or until you delete your account</ListItem>
-            <ListItem>Payment records: As required by tax laws (typically 10 years in Germany)</ListItem>
+            <ListItem>Payment records: As required by tax laws (typically 10 years in the Philippines)</ListItem>
           </UnorderedList>
         </LegalSection>
 
         <LegalSection title='7. Your Data Protection Rights'>
-          <Text mb={4}>Under GDPR, you have the following rights:</Text>
+          <Text mb={4}>Under the Data Privacy Act of 2012 (DPA), you have the following rights:</Text>
           <UnorderedList spacing={2} mb={4}>
             <ListItem>Right to access your personal data</ListItem>
             <ListItem>Right to rectification of inaccurate data</ListItem>
@@ -153,7 +152,7 @@ const PrivacyPolicy = () => {
             <ListItem>Right to withdraw consent</ListItem>
           </UnorderedList>
           <Text>
-            To exercise these rights, please contact us at info.crimpin@gmail.com
+            To exercise these rights, please contact us at lattetechindustry@coverletter.work
           </Text>
         </LegalSection>
 
@@ -166,7 +165,15 @@ const PrivacyPolicy = () => {
             </ListItem>
             <ListItem>
               <Text fontWeight='semibold' as='span'>OpenAI: </Text>
-              For AI-powered content generation
+              For AI-powered content generation.
+            </ListItem>
+            <ListItem>
+              <Text fontWeight='semibold' as='span'>Google: </Text>
+              For user authentication and single sign-on (SSO).
+            </ListItem>
+            <ListItem>
+              <Text fontWeight='semibold' as='span'>SendGrid: </Text>
+              For sending transactional emails and notifications.
             </ListItem>
           </UnorderedList>
           <Text>
@@ -175,16 +182,12 @@ const PrivacyPolicy = () => {
           </Text>
         </LegalSection>
 
-        <LegalSection title='9. International Data Transfers'>
+        <LegalSection title='9. Data Storage and Transfers'>
           <Text mb={4}>
-            Your data may be transferred to and processed in countries outside the EU. 
-            When this occurs, we ensure appropriate safeguards are in place through:
+            Your data is stored and processed securely within the Philippines. We do not 
+            transfer your personal data internationally. All data handling complies 
+            strictly with the Data Privacy Act of 2012 (Republic Act No. 10173).
           </Text>
-          <UnorderedList spacing={2}>
-            <ListItem>EU Standard Contractual Clauses</ListItem>
-            <ListItem>Adequacy decisions by the European Commission</ListItem>
-            <ListItem>Other legally recognized transfer mechanisms</ListItem>
-          </UnorderedList>
         </LegalSection>
 
         <LegalSection title='10. Cookies and Tracking'>
@@ -231,10 +234,10 @@ const PrivacyPolicy = () => {
           </Text>
           <UnorderedList spacing={2} mb={4}>
             <ListItem>
-              By email: info.crimpin@gmail.com
+              By email: lattetechindustry@coverletter.work
             </ListItem>
             <ListItem>
-              By mail: Canger & Shahab Crimpin GbR, Zum Steinberg 12, 69121 Heidelberg, Germany
+              By mail: Latte Tech Industry, Calamba, Laguna, Philippines
             </ListItem>
           </UnorderedList>
           <Text>

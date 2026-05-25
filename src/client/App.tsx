@@ -3,7 +3,8 @@ import { ChakraProvider, VStack, Box, Spacer } from '@chakra-ui/react';
 import { theme } from './theme';
 import { useState, useEffect, createContext } from 'react';
 import NavBar from './components/NavBar';
-import { Footer } from './components/CallToAction';
+import Footer from './components/Footer';
+
 import { EditPopover } from './components/Popover';
 import { useLocation, Outlet } from 'react-router';
 
@@ -86,12 +87,45 @@ export default function App() {
         >
           {!!user && <EditPopover setTooltip={setTooltip} user={user} />}
         </Box>
-        <VStack gap={5} minHeight='100vh'>
-          <NavBar />
-          <Outlet />
-          <Spacer />
-          <Footer />
-        </VStack>
+        <Box 
+          minHeight='100vh' 
+          position='relative' 
+          bg='gray.50' 
+          _dark={{ bg: 'gray.900' }}
+          overflow='hidden'
+        >
+          {/* Modernistic Gen Z Aurora Glow Background */}
+          <Box
+            position="absolute"
+            top="-10%"
+            left="-10%"
+            w={{ base: "80%", md: "50%" }}
+            h={{ base: "60%", md: "50%" }}
+            bgGradient="radial(blue.400, transparent)"
+            filter="blur(120px)"
+            opacity={0.3}
+            _dark={{ bgGradient: "radial(blue.800, transparent)", opacity: 0.5 }}
+            pointerEvents="none"
+          />
+          <Box
+            position="absolute"
+            bottom="-10%"
+            right="-10%"
+            w={{ base: "80%", md: "50%" }}
+            h={{ base: "60%", md: "50%" }}
+            bgGradient="radial(purple.400, transparent)"
+            filter="blur(120px)"
+            opacity={0.3}
+            _dark={{ bgGradient: "radial(purple.800, transparent)", opacity: 0.5 }}
+            pointerEvents="none"
+          />
+          <VStack gap={5} minHeight='100vh' position='relative' zIndex={1}>
+            <NavBar />
+            <Outlet />
+            <Spacer />
+            <Footer />
+          </VStack>
+        </Box>
       </TextareaContext.Provider>
     </ChakraProvider>
   );

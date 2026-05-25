@@ -71,13 +71,13 @@ ChakraButton.defaultProps = {
 
 ChakraCheckbox.defaultProps = {
   ...ChakraCheckbox.defaultProps,
-  colorScheme: 'purple',
+  colorScheme: 'gray',
 };
 
 export const Checkbox = {
   baseStyle: {
     control: {
-      border: 'md',
+      border: '1px solid',
       borderColor: 'border-contrast-md',
       bg: 'bg-contrast-sm',
       _hover: {
@@ -85,7 +85,7 @@ export const Checkbox = {
         borderColor: 'border-contrast-md',
       },
       _focus: {
-        boxShadow: '0px 0px 0px 2px var(--chakra-colors-active)',
+        boxShadow: '0px 0px 0px 1px var(--chakra-colors-active)',
         borderColor: 'active',
       },
       _disabled: {
@@ -97,7 +97,7 @@ export const Checkbox = {
 
 ChakraInput.defaultProps = {
   ...ChakraInput.defaultProps,
-  focusBorderColor: 'white',
+  focusBorderColor: 'gray.900',
   variant: 'outline',
 };
 
@@ -105,12 +105,11 @@ export const Input = {
   variants: {
     outline: {
       field: {
-        border: 'sm',
+        border: '1px solid',
         borderColor: 'border-contrast-xs',
-        bg: 'bg-contrast-xs',
+        bg: 'transparent',
         color: 'text-contrast-lg',
         _hover: {
-          bg: 'bg-contrast-md',
           borderColor: 'border-contrast-md',
         },
         _focus: {
@@ -126,28 +125,41 @@ export const Input = {
         },
       },
     },
+    flushed: {
+      field: {
+        borderBottom: '1px solid',
+        borderColor: 'border-contrast-xs',
+        bg: 'transparent',
+        px: 0,
+        _hover: {
+          borderColor: 'border-contrast-md',
+        },
+        _focus: {
+          boxShadow: 'none',
+          borderColor: 'active',
+        },
+      }
+    }
   },
 };
 
 ChakraTextarea.defaultProps = {
   ...ChakraTextarea.defaultProps,
-  focusBorderColor: 'purple.300',
+  focusBorderColor: 'gray.900',
   variant: 'outline',
   sx: {
     '&::-webkit-scrollbar': {
-      width: '12px',
+      width: '8px',
     },
     '&::-webkit-scrollbar-track': {
       backgroundColor: 'transparent',
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'purple.100',
-      borderRadius: '20px',
-      border: '3px solid transparent',
-      backgroundClip: 'content-box',
+      backgroundColor: 'gray.200',
+      borderRadius: '8px',
     },
     '&::-webkit-scrollbar-thumb:hover': {
-      backgroundColor: 'purple.200',
+      backgroundColor: 'gray.300',
     },
   },
 };
@@ -155,16 +167,16 @@ ChakraTextarea.defaultProps = {
 export const Textarea = {
   variants: {
     outline: {
-      border: 'sm',
+      border: '1px solid',
       borderColor: 'border-contrast-xs',
-      bg: 'bg-contrast-sm',
+      bg: 'transparent',
       color: 'text-contrast-lg',
       _hover: {
         borderColor: 'border-contrast-md',
       },
       _focus: {
         boxShadow: 'none',
-        bgColor: 'bg-contrast-xs',
+        borderColor: 'active',
       },
       _disabled: {
         bg: 'bg-contrast-xs',
@@ -180,23 +192,18 @@ export const Textarea = {
 ChakraSelect.defaultProps = {
   ...ChakraSelect.defaultProps,
   variant: 'outline',
-  border: 'sm',
+  border: '1px solid',
   borderColor: 'border-contrast-xs',
-  bg: 'bg-contrast-sm',
+  bg: 'transparent',
 
   _hover: {
-    bg: 'bg-contrast-md',
     borderColor: 'border-contrast-sm',
   },
   _focus: {
     boxShadow: 'none',
     borderColor: 'active',
   },
-  // _disabled: {
-  //   bg: 'bg-contrast-xs',
-  // },
   _placeholder: {
-    // color: 'white',
     fontSize: 'sm',
     color: 'text-contrast-sm',
   },
@@ -204,8 +211,8 @@ ChakraSelect.defaultProps = {
 
 ChakraRadio.defaultProps = {
   ...ChakraRadio.defaultProps,
-  colorScheme: 'purple',
-  border: 'md',
+  colorScheme: 'gray',
+  border: '1px solid',
   borderColor: 'border-contrast-sm',
 };
 

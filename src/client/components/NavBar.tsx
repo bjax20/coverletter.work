@@ -9,9 +9,9 @@ import {
   MenuList,
   MenuItem,
   Menu,
-  Text,
   StackProps,
   useColorModeValue,
+  Box,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { CgProfile } from 'react-icons/cg';
@@ -23,65 +23,79 @@ import ThemeSwitch from './ThemeSwitch';
 export default function NavBar() {
   const { data: user } = useAuth();
 
-  const gptTextColor = useColorModeValue('purple.500', 'white');
-  const borderColor = useColorModeValue('purple.300', 'purple.100');
+  const borderColor = useColorModeValue('white', 'whiteAlpha.100');
+  const bgNav = useColorModeValue('rgba(255, 255, 255, 0.75)', 'rgba(15, 23, 42, 0.75)');
+  const headingColor = useColorModeValue('gray.900', 'white');
+  const navShadow = useColorModeValue('0px 10px 40px rgba(0, 0, 0, 0.08)', '0px 10px 40px rgba(0, 0, 0, 0.4)');
 
   return (
-    <HStack
-      as='nav'
-      align='center'
-      justify='between'
-      px={7}
-      py={4}
-      top={0}
-      width='full'
-      position='sticky'
-      backdropFilter='blur(5px)'
-      borderBottom='md'
-      borderColor={borderColor}
-      filter='drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.25))'
-      color='text-contrast-lg'
+    <Box
+      display="flex"
+      justifyContent="center"
+      position="sticky"
+      top={4}
+      w="full"
       zIndex={99}
+      px={4}
     >
-      <HStack width='full' px={1} gap={3} align='center' justify='space-between'>
-        <Link as={RouterLink} to='/'>
-          <HStack gap={0}>
-            <Heading size='md' color={'text-contrast-md'}>
-              CoverLetter
+      <Box
+        as='nav'
+        width='full'
+        maxW="5xl"
+        backdropFilter='blur(20px)'
+        bg={bgNav}
+        border='1px solid'
+        borderColor={borderColor}
+        borderRadius="full"
+        boxShadow={navShadow}
+        transition="all 0.3s"
+      >
+        <HStack
+          align='center'
+          justify='space-between'
+          px={{ base: 5, md: 6 }}
+          py={2}
+        >
+          <Link as={RouterLink} to='/' _hover={{ textDecoration: 'none' }}>
+            <Heading size='md' fontWeight="900" letterSpacing="tighter" bgGradient="linear(to-r, blue.600, purple.600)" bgClip="text" _dark={{ bgGradient: "linear(to-r, blue.400, teal.300)" }}>
+              CoverLetter.Work
             </Heading>
-            <Heading size='md' color={gptTextColor}>
-              GPT
-            </Heading>
+          </Link>
+          <Spacer />
+          
+          <HStack gap={{ base: 3, md: 4 }} align="center">
+            {user ? (
+              <>
+                <NavButton icon={<MdWorkOutline />} to='/jobs'>
+                  My Jobs
+                </NavButton>
+                <NavButton icon={<CgProfile />} to='/profile'>
+                  Credits
+                </NavButton>
+              </>
+            ) : (
+              <NavButton icon={<CgProfile />} to='/login'>
+                Login
+              </NavButton>
+            )}
+            
+            <Box w="1px" h="16px" bg={borderColor} display={{ base: 'none', md: 'block' }} mx={1} />
+            
+            <ThemeSwitch />
+            
+            {user ? (
+              <MobileButton icon={<AiOutlineMenu />} isUser={true}>
+                Menu
+              </MobileButton>
+            ) : (
+              <MobileButton icon={<AiOutlineMenu />} isUser={false}>
+                Menu
+              </MobileButton>
+            )}
           </HStack>
-        </Link>
-        <Spacer />
-        <ThemeSwitch />
-
-        {user ? (
-          <>
-            <NavButton icon={<MdWorkOutline />} to='/jobs'>
-              Jobs Dashboard
-            </NavButton>
-            <Spacer maxW='3px' />
-            <NavButton icon={<CgProfile />} to='/profile'>
-              Account
-            </NavButton>
-            <MobileButton icon={<AiOutlineMenu />} isUser={true}>
-              Menu
-            </MobileButton>
-          </>
-        ) : (
-          <>
-            <NavButton icon={<CgProfile />} to='/login'>
-              Login
-            </NavButton>
-            <MobileButton icon={<AiOutlineMenu />} isUser={false}>
-              Menu
-            </MobileButton>
-          </>
-        )}
-      </HStack>
-    </HStack>
+        </HStack>
+      </Box>
+    </Box>
   );
 }
 
@@ -94,6 +108,11 @@ interface NavButtonProps extends StackProps {
 
 function NavButton({ children, icon, to, ...props }: NavButtonProps) {
   const linkRef = useRef<HTMLAnchorElement>(null);
+  
+  const hoverColor = useColorModeValue('blue.600', 'blue.300');
+  const color = useColorModeValue('gray.600', 'gray.400');
+  const hoverBg = useColorModeValue('blue.50', 'whiteAlpha.100');
+
   function removeFocus() {
     if (linkRef.current) {
       linkRef.current.blur();
@@ -101,11 +120,22 @@ function NavButton({ children, icon, to, ...props }: NavButtonProps) {
   }
 
   return (
-    <Link as={RouterLink} to={to} display={['none', 'block']} ref={linkRef} onClick={removeFocus}>
-      <HStack {...props}>
-        {icon}
-        <Text>{children}</Text>
-      </HStack>
+    <Link as={RouterLink} to={to} display={['none', 'block']} ref={linkRef} onClick={removeFocus} _hover={{ textDecoration: 'none' }}>
+      <Button
+        variant="unstyled"
+        display="flex"
+        alignItems="center"
+        size="sm"
+        leftIcon={icon}
+        fontWeight="600"
+        color={color}
+        borderRadius="full"
+        px={3}
+        transition="all 0.2s"
+        _hover={{ color: hoverColor, bg: hoverBg }}
+      >
+        {children}
+      </Button>
     </Link>
   );
 }
@@ -119,6 +149,10 @@ function MobileButton({
   icon: React.ReactElement;
   isUser?: boolean;
 }) {
+  const borderColor = useColorModeValue('gray.200', 'whiteAlpha.200');
+  const hoverBg = useColorModeValue('gray.50', 'whiteAlpha.100');
+  const menuBg = useColorModeValue('white', 'gray.900');
+
   return (
     <Menu>
       <MenuButton
@@ -126,30 +160,30 @@ function MobileButton({
         aria-label={children as string}
         leftIcon={icon}
         display={['block', 'none']}
-        size='md'
-        border='md'
+        size='sm'
+        variant="outline"
+        borderColor={borderColor}
+        bg="transparent"
         _hover={{
-          border: 'md',
-          borderColor: 'rgba(255, 250, 240, 0.55)',
-          transition: 'all 0.3s ease-in-out',
+          bg: hoverBg,
         }}
       >
         {children}
       </MenuButton>
-      <MenuList bgColor='gray.900'>
+      <MenuList bgColor={menuBg} borderColor={borderColor} boxShadow="sm" p={1}>
         {isUser ? (
           <>
-            <Link as={RouterLink} to={`/jobs`}>
-              <MenuItem>Jobs Dashboard</MenuItem>
+            <Link as={RouterLink} to={`/jobs`} _hover={{ textDecoration: 'none' }}>
+              <MenuItem borderRadius="md" fontWeight="500" _hover={{ bg: hoverBg }}>My Jobs</MenuItem>
             </Link>
-            <Link as={RouterLink} to={`/profile`}>
-              <MenuItem>Account</MenuItem>
+            <Link as={RouterLink} to={`/profile`} _hover={{ textDecoration: 'none' }}>
+              <MenuItem borderRadius="md" fontWeight="500" _hover={{ bg: hoverBg }}>Credits</MenuItem>
             </Link>
           </>
         ) : (
           <>
-            <Link as={RouterLink} to='/login'>
-              <MenuItem>Login</MenuItem>
+            <Link as={RouterLink} to='/login' _hover={{ textDecoration: 'none' }}>
+              <MenuItem borderRadius="md" _hover={{ bg: hoverBg }}>Login</MenuItem>
             </Link>
           </>
         )}

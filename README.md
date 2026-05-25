@@ -32,10 +32,9 @@ Also, [Chakra-ui](https://chakra-ui.com/) is great for building nice looking UIâ
 
 For more info on the prompts and configuration I used for the [OpenAI](https://openai.com/) API, check out the `src/server/actions.ts` file.
 
-[PayMongo](https://paymongo.com/) makes the payment functionality super easy. I configure two products (a subscription and a package). After the user pays, I update their `hasPaid` and `datePaid` fields in the database.
+[PayMongo](https://paymongo.com/) makes the payment functionality super easy. I configured a few credit packages. After the user pays, their credits are updated in the database.
 
 [Lightning / Bolt11](https://github.com/bitcoinjs/bolt11) is a great library for working with Bitcoin Lightning payments. I used it to generate a Lightning invoice for the user to pay. After the user pays, I update their `LnPayment.status` field in the database (see `src/server/ln.ts`), which allows the user to perform a generation on the front-end. I personally accept the payments to my [Alby](https://getalby.com/) lightning address.
 
-I also implemented a cron job to send an email to the user to notify them 2 weeks before their subscription ends. I used [SendGrid](https://sendgrid.com/) for the email service.
 
 If you have any other questions, feel free to reach out to me on [twitter](https://twitter.com/hot_town)

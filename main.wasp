@@ -1,20 +1,21 @@
-app CoverLetterGPT {
+app CoverLetterWork {
   wasp: {
     version: "^0.19.0"
   },
-  title: "CoverLetterGPT",
+  title: "CoverLetter.Work | Philippine Cover Letter Generator",
   head: [
         "<meta charSet=\"UTF-8\" />",
+        "<link rel=\"icon\" type=\"image/png\" href=\"/coverletterwork.png\" />",
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",
         "<meta name=\"description\" content=\"Create Unique Cover Letters Based on Your Skills using GPT. Supercharge Your Job Search with Cover Letter GPT.\" />",
         "<meta name=\"keywords\" content=\"cover letter, gpt, ai, job search, resume\" />",
-        "<meta name=\"author\" content=\"CoverLetterGPT\" />",
+        "<meta name=\"author\" content=\"CoverLetter.Work\" />",
         "<meta property=\"og:type\" content=\"website\" />",
-        "<meta property=\"og:url\" content=\"https://CoverLetterGPT.xyz\" />",
-        "<meta property=\"og:title\" content=\"CoverLetterGPT\" />",
+        "<meta property=\"og:url\" content=\"https://CoverLetter.Work.xyz\" />",
+        "<meta property=\"og:title\" content=\"CoverLetter.Work\" />",
         "<meta property=\"og:description\" content=\"Create Unique Cover Letters Based on Your Skills using GPT. Supercharge Your Job Search with Cover Letter GPT.\" />",
-        "<meta property=\"og:image\" content=\"https://CoverLetterGPT.xyz/homepage.png\" />",
-        "<meta name=\"twitter:image\" content=\"https://CoverLetterGPT.xyz/homepage.png\" />",
+        "<meta property=\"og:image\" content=\"https://CoverLetter.Work.xyz/homepage.png\" />",
+        "<meta name=\"twitter:image\" content=\"https://CoverLetter.Work.xyz/homepage.png\" />",
         "<meta name=\"twitter:image:width\" content=\"800\" />",
         "<meta name=\"twitter:image:height\" content=\"400\" />",
         "<meta name=\"twitter:card\" content=\"summary_large_image\" />",
@@ -37,7 +38,7 @@ app CoverLetterGPT {
   emailSender: {
     provider: SendGrid,
     defaultFrom: {
-      name: "CoverLetterGPT",
+      name: "CoverLetter.Work",
       email: "vince@wasp.sh",
     },
   },
@@ -212,18 +213,4 @@ api lnLogin {
   entities: [User, LnData],
   httpRoute: (GET, "/ln-login")
 }
-
-/* 🕵️‍♂️ These are the Wasp Cron Jobs. Use them to set up recurring tasks or queues:
- * https://wasp.sh/docs/language/features#jobs
- */
-
-job checkUserSubscription {
-  executor: PgBoss,
-  perform: {
-    fn: import { updateUserSubscription } from "@src/server/workers/updateUserSubscription.js"
-  },
-  schedule: {
-    cron: "0 23 * * *"
-  },
-  entities: [User]
-}
+

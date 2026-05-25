@@ -13,11 +13,10 @@ model User {
   email                String?
   hasPaid              Boolean       @default(false)
   isUsingLn            Boolean       @default(false)
-  gptModel             String        @default("gpt-4o-mini")
   datePaid             DateTime?
   paymongoId           String?
   checkoutSessionId    String?
-  subscriptionStatus   String?
+
   notifyPaymentExpires Boolean       @default(false)
   credits              Int           @default(3)
   letters              CoverLetter[]

@@ -20,29 +20,77 @@ const paymongoHeaders = {
 
 const DOMAIN = process.env.WASP_WEB_CLIENT_URL || 'http://localhost:3000';
 
+const ANTI_AI_RULES = `
+CRITICAL CONSTRAINTS TO AVOID AI PATTERNS:
+- BANNED WORDS: delve, thrilled, testament, tapestry, synergy, dynamic, innovative, passionate, esteemed, landscape, leverage, utilize, groundbreaking.
+- NO EMOJIS: Do not use any emojis.
+- NO EM DASHES: Do not use the em dash punctuation mark anywhere in the output. Use standard commas or periods instead.
+- NO RULE OF THREE: Do not group adjectives, skills, or verbs in lists of three.
+- NO CONTRAST FRAMING: Do not use phrasing like "It is not about X, it is about Y".
+- NO RHETORICAL QUESTIONS: Do not use transition questions like "The catch?" or "The brutal truth?".
+- USE ACTIVE VERBS: Avoid corporate "-ing" words like highlighting or emphasizing.
+- NO FLUFF: Do not use vague opinions like "It is important to note" or declare the candidate as a "perfect fit".
+- NO HALLUCINATIONS: Do not invent names, fake case studies, or metrics.
+`;
+
+const OPTIMIZATION_RULES = `
+CRITICAL OPTIMIZATION RULES:
+- Infer the employer's real hiring priorities from the job description.
+- Extract important ATS keywords and integrate them naturally.
+- Frontload the applicant's strongest matching qualifications early.
+- Focus on specific contributions and outcomes instead of generic responsibilities.
+- Mirror the tone and terminology of the job description without copying sentences.
+- Avoid generic introductions and template sounding phrasing.
+`;
+
+const FORMAT_RULES = `
+FORMAT RULES:
+- Start with the applicant's contact information.
+- Then include a natural greeting to the recruiter, hiring manager, or company team, not just the company name.
+- Immediately continue with the cover letter content.
+- Keep formatting clean and professional.
+- Do not use markdown, bullet points, or labels.
+`;
+
 const gptConfig = {
-  completeCoverLetter: `You are a cover letter generator.
-You will be given a job description along with the job applicant's resume.
-You will write a cover letter for the applicant that matches their past experiences from the resume with the job description. Write the cover letter in the same language as the job description provided!
-Rather than simply outlining the applicant's past experiences, you will give more detail and explain how those experiences will help the applicant succeed in the new job.
-You will write the cover letter in a modern, professional style without being too formal, as a modern employee might do naturally.`,
-  coverLetterWithAWittyRemark: `You are a cover letter generator.
-You will be given a job description along with the job applicant's resume.
-You will write a cover letter for the applicant that matches their past experiences from the resume with the job description. Write the cover letter in the same language as the job description provided!
-Rather than simply outlining the applicant's past experiences, you will give more detail and explain how those experiences will help the applicant succeed in the new job.
-You will write the cover letter in a modern, relaxed style, as a modern employee might do naturally.
-Include a job related joke at the end of the cover letter.`,
-  ideasForCoverLetter:
-    "You are a cover letter idea generator. You will be given a job description along with the job applicant's resume. You will generate a bullet point list of ideas for the applicant to use in their cover letter. ",
+  completeCoverLetter: `You are a professional cover letter generator.
+
+You will be given:
+- a job description
+- the applicant's resume
+
+Write a tailored cover letter that aligns the applicant's experience with the role.
+
+The cover letter must:
+- be written in the same language as the job description
+- sound modern and professional without sounding overly formal
+- explain how the applicant's experience will help them succeed in this role
+- sound natural and written by a real person
+
+${OPTIMIZATION_RULES}
+
+${FORMAT_RULES}
+
+${ANTI_AI_RULES}`,
+
+  ideasForCoverLetter: `You are a cover letter idea generator.
+    
+You will be given:
+- a job description
+- the applicant's resume
+
+Generate strong cover letter angles, themes, and talking points tailored to the role.
+
+${OPTIMIZATION_RULES}
+
+${ANTI_AI_RULES}`
 };
 
 type CoverLetterPayload = Pick<CoverLetter, 'title' | 'jobId'> & {
   content: string;
   description: string;
   isCompleteCoverLetter: boolean;
-  includeWittyRemark: boolean;
   temperature: number;
-  gptModel: string;
   lnPayment?: LnPayment;
 };
 
@@ -71,11 +119,8 @@ type OpenAIResponse = {
 };
 
 async function checkIfUserPaid({ context, lnPayment }: { context: any; lnPayment?: LnPayment }) {
-  if (!context.user.hasPaid && !context.user.credits && !context.user.isUsingLn) {
+  if (!context.user.credits && !context.user.isUsingLn) {
     throw new HttpError(402, 'User must pay to continue');
-  }
-  if (context.user.subscriptionStatus === 'past_due') {
-    throw new HttpError(402, 'Your subscription is past due. Please update your payment method.');
   }
   if (context.user.isUsingLn) {
     let invoiceStatus;
@@ -95,7 +140,7 @@ async function checkIfUserPaid({ context, lnPayment }: { context: any; lnPayment
 }
 
 export const generateCoverLetter: GenerateCoverLetter<CoverLetterPayload, CoverLetter> = async (
-  { jobId, title, content, description, isCompleteCoverLetter, includeWittyRemark, temperature, gptModel, lnPayment },
+  { jobId, title, content, description, isCompleteCoverLetter, temperature, lnPayment },
   context
 ) => {
   if (!context.user) {
@@ -105,15 +150,13 @@ export const generateCoverLetter: GenerateCoverLetter<CoverLetterPayload, CoverL
 
   let command;
   if (isCompleteCoverLetter) {
-    command = includeWittyRemark ? gptConfig.coverLetterWithAWittyRemark : gptConfig.completeCoverLetter;
+    command = gptConfig.completeCoverLetter;
   } else {
     command = gptConfig.ideasForCoverLetter;
   }
 
-  console.log(' gpt model: ', gptModel);
-
   const payload = {
-    model: gptModel,
+    model: 'gpt-5.4-mini',
     messages: [
       {
         role: 'system',
@@ -130,9 +173,9 @@ export const generateCoverLetter: GenerateCoverLetter<CoverLetterPayload, CoverL
   let json: OpenAIResponse;
 
   try {
-    if (!context.user.hasPaid && !context.user.credits && !context.user.isUsingLn) {
+    if (!context.user.credits && !context.user.isUsingLn) {
       throw new HttpError(402, 'User has not paid or is out of credits');
-    } else if (context.user.credits && !context.user.hasPaid) {
+    } else if (context.user.credits > 0) {
       console.log('decrementing credits \n\n');
       await context.entities.User.update({
         where: { id: context.user.id },
@@ -167,7 +210,7 @@ export const generateCoverLetter: GenerateCoverLetter<CoverLetterPayload, CoverL
       },
     });
   } catch (error: any) {
-    if (!context.user.hasPaid && error?.statusCode != 402) {
+    if (context.user.credits > 0 && error?.statusCode != 402) {
       await context.entities.User.update({
         where: { id: context.user.id },
         data: {
@@ -195,7 +238,7 @@ export const generateEdit: GenerateEdit<
   command = `You are a cover letter editor. You will be given a piece of isolated text from within a cover letter and told how you can improve it. Only respond with the revision. Make sure the revision is in the same language as the given isolated text.`;
 
   const payload = {
-    model: context.user.gptModel === 'gpt-4' || context.user.gptModel === 'gpt-4o' ? 'gpt-4o' : 'gpt-4o-mini',
+    model: 'gpt-5.4-mini',
     messages: [
       {
         role: 'system',
@@ -299,17 +342,15 @@ export const updateJob: UpdateJob<UpdateJobPayload, Job> = (
   });
 };
 
-export type UpdateCoverLetterPayload = Pick<Job, 'id' | 'description'> &
+export type UpdateCoverLetterPayload = Pick<Job, 'id' | 'title' | 'company' | 'location' | 'description'> &
   Pick<CoverLetter, 'content'> & {
     isCompleteCoverLetter: boolean;
-    includeWittyRemark: boolean;
     temperature: number;
-    gptModel: string;
     lnPayment?: LnPayment;
   };
 
 export const updateCoverLetter: UpdateCoverLetter<UpdateCoverLetterPayload, string> = async (
-  { id, description, content, isCompleteCoverLetter, includeWittyRemark, temperature, gptModel, lnPayment },
+  { id, title, company, location, description, content, isCompleteCoverLetter, temperature, lnPayment },
   context
 ) => {
   if (!context.user) {
@@ -331,13 +372,11 @@ export const updateCoverLetter: UpdateCoverLetter<UpdateCoverLetterPayload, stri
   const coverLetter = await generateCoverLetter(
     {
       jobId: id,
-      title: job.title,
+      title: title || job.title,
       content,
-      description: job.description,
+      description: description || job.description,
       isCompleteCoverLetter,
-      includeWittyRemark,
       temperature,
-      gptModel,
       lnPayment,
     },
     context
@@ -348,6 +387,9 @@ export const updateCoverLetter: UpdateCoverLetter<UpdateCoverLetterPayload, stri
       id,
     },
     data: {
+      title,
+      company,
+      location,
       description,
       coverLetter: { connect: { id: coverLetter.id } },
     },
@@ -390,11 +432,11 @@ export const deleteJob: DeleteJob<{ jobId: string }, { count: number }> = ({ job
   });
 };
 
-type UpdateUserArgs = Partial<Pick<User, 'id' | 'notifyPaymentExpires' | 'gptModel'>>;
+type UpdateUserArgs = Partial<Pick<User, 'id' | 'notifyPaymentExpires'>>;
 type UserWithoutPassword = Omit<User, 'password'>;
 
 export const updateUser: UpdateUser<UpdateUserArgs, UserWithoutPassword> = async (
-  { notifyPaymentExpires, gptModel },
+  { notifyPaymentExpires },
   context
 ) => {
   if (!context.user) {
@@ -407,7 +449,6 @@ export const updateUser: UpdateUser<UpdateUserArgs, UserWithoutPassword> = async
     },
     data: {
       notifyPaymentExpires,
-      gptModel,
     },
     select: {
       id: true,
@@ -419,9 +460,7 @@ export const updateUser: UpdateUser<UpdateUserArgs, UserWithoutPassword> = async
       checkoutSessionId: true,
       paymongoId: true,
       credits: true,
-      gptModel: true,
       isUsingLn: true,
-      subscriptionStatus: true,
     },
   });
 };
@@ -489,7 +528,7 @@ export const createPaymongoCheckout: CreatePaymongoCheckout<{ tier: string }, Pa
         payment_method_types: ['gcash', 'paymaya', 'qrph', 'card'],
         success_url: `${DOMAIN}/profile?success=true`,
         cancel_url: `${DOMAIN}/profile?canceled=true`,
-        description: `CoverLetterGPT - ${name}`,
+        description: `CoverLetter.Work - ${name}`,
         metadata: {
           userId: context.user.id.toString(),
           credits: credits.toString(),

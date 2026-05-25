@@ -232,7 +232,6 @@ export const generateEdit: GenerateEdit<
   if (!context.user) {
     throw new HttpError(401);
   }
-  await checkIfUserPaid({ context, lnPayment });
 
   let command;
   command = `You are a cover letter editor. You will be given a piece of isolated text from within a cover letter and told how you can improve it. Only respond with the revision. Make sure the revision is in the same language as the given isolated text.`;
@@ -255,20 +254,6 @@ export const generateEdit: GenerateEdit<
   let json: OpenAIResponse;
 
   try {
-    if (!context.user.hasPaid && !context.user.credits && !context.user.isUsingLn) {
-      throw new HttpError(402, 'User has not paid or is out of credits');
-    } else if (context.user.credits && !context.user.hasPaid) {
-      console.log('decrementing credits \n\n');
-      await context.entities.User.update({
-        where: { id: context.user.id },
-        data: {
-          credits: {
-            decrement: 1,
-          },
-        },
-      });
-    }
-
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       headers: {
         'Content-Type': 'application/json',
@@ -285,16 +270,6 @@ export const generateEdit: GenerateEdit<
       throw new HttpError(500, 'GPT returned an empty response');
     }
   } catch (error: any) {
-    if (!context.user.hasPaid && error?.statusCode != 402) {
-      await context.entities.User.update({
-        where: { id: context.user.id },
-        data: {
-          credits: {
-            increment: 1,
-          },
-        },
-      });
-    }
     console.error(error);
     throw new HttpError(error.statusCode || 500, error.message || 'Something went wrong');
   }

@@ -37,6 +37,7 @@ import {
   useDisclosure,
   Icon,
   Image,
+  Badge,
 } from '@chakra-ui/react';
 import { MdCheckCircle } from 'react-icons/md';
 import { FiMinimize2, FiMaximize2, FiBriefcase, FiMessageCircle } from 'react-icons/fi';
@@ -106,8 +107,6 @@ function MainPage() {
   const { isOpen: loginIsOpen, onOpen: loginOnOpen, onClose: loginOnClose } = useDisclosure();
   const { isOpen: lnPaymentIsOpen, onOpen: lnPaymentOnOpen, onClose: lnPaymentOnClose } = useDisclosure();
 
-  let setLoadingTextTimeout: ReturnType<typeof setTimeout>;
-  const loadingTextRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -260,13 +259,10 @@ function MainPage() {
         lnPayment: lnPayment || undefined,
       };
 
-      setLoadingText();
-
       const coverLetter = await generateCoverLetter(payload);
 
       navigate(`/cover-letter/${coverLetter.id}`);
     } catch (error: any) {
-      cancelLoadingText();
       alert(`${error?.message ?? 'Something went wrong, please try again'}`);
       console.error(error);
     }
@@ -304,13 +300,10 @@ function MainPage() {
         lnPayment: lnPayment || undefined,
       };
 
-      setLoadingText();
-
       const coverLetterId = await updateCoverLetter(payload);
 
       navigate(`/cover-letter/${coverLetterId}`);
     } catch (error: any) {
-      cancelLoadingText();
       alert(`${error?.message ?? 'Something went wrong, please try again'}`);
       console.error(error);
     }
@@ -324,16 +317,7 @@ function MainPage() {
     }
   }
 
-  function setLoadingText() {
-    setLoadingTextTimeout = setTimeout(() => {
-      loadingTextRef.current && (loadingTextRef.current.innerText = ' patience, my friend 🧘...');
-    }, 2000);
-  }
 
-  function cancelLoadingText() {
-    clearTimeout(setLoadingTextTimeout);
-    loadingTextRef.current && (loadingTextRef.current.innerText = '');
-  }
 
   function hasUserPaidOrActiveTrial(): Boolean {
     if (user) {
@@ -363,6 +347,13 @@ function MainPage() {
     <>
       <VStack gap={4} mt={20} mb={10} textAlign="center" maxW="4xl" px={4} align="center" mx="auto">
         <VStack gap={4}>
+          {user && (
+            <Box px={4} py={1} bg="blue.50" _dark={{ bg: "whiteAlpha.100" }} borderRadius="full" mb={-2}>
+              <Text fontSize="sm" fontWeight="600" color="blue.600" _dark={{ color: "blue.300" }}>
+                Hi, {user.username || user.email?.split('@')[0] || 'User'}! 👋
+              </Text>
+            </Box>
+          )}
           <Heading size="4xl" fontWeight="900" letterSpacing="tighter" lineHeight="1.1" color="gray.900" _dark={{ color: 'white' }}>
             Generate. Edit. <Box as="span" bgGradient="linear(to-r, blue.600, purple.600)" bgClip="text" _dark={{ bgGradient: "linear(to-r, blue.400, teal.300)" }}>Get Hired.</Box>
           </Heading>
@@ -403,6 +394,11 @@ function MainPage() {
               @keyframes slide {
                 0% { transform: translateX(0); }
                 100% { transform: translateX(-50%); }
+              }
+              @keyframes pulse-fast {
+                0% { opacity: 0.7; transform: scale(0.98); }
+                50% { opacity: 1; transform: scale(1.02); }
+                100% { opacity: 0.7; transform: scale(0.98); }
               }
             `}
           </style>
@@ -446,9 +442,16 @@ function MainPage() {
           onSubmit={!isCoverLetterUpdate ? handleSubmit(onSubmit) : handleSubmit(onUpdate)}
           style={{ width: '100%' }}
         >
-            <Heading size={'md'} alignSelf={'start'} mb={6} w='full' fontWeight="600" letterSpacing="tight">
+          <HStack justify="space-between" align="center" mb={6} w="full">
+            <Heading size={'md'} fontWeight="600" letterSpacing="tight">
               Job Details {isCoverLetterUpdate && <Code ml={1}>Editing...</Code>}
             </Heading>
+            {user && (
+              <Badge colorScheme={user.credits > 0 ? "blue" : "red"} variant="subtle" px={3} py={1} borderRadius="full" fontSize="sm" textTransform="none" fontWeight="700" boxShadow="sm">
+                ✨ {user.credits} Credits Remaining
+              </Badge>
+            )}
+          </HStack>
 
           {showSpinner && <Spinner />}
           {showForm && (
@@ -632,9 +635,21 @@ function MainPage() {
                 >
                   {!isCoverLetterUpdate ? 'Generate Cover Letter' : 'Create New Cover Letter'}
                 </Button>
-                <Text ref={loadingTextRef} fontSize='xs' fontWeight="400" color='gray.500' h="20px" mt={2}>
-                  {' '}
-                </Text>
+                {isSubmitting ? (
+                  <HStack 
+                    mt={3} 
+                    h="24px"
+                    spacing={3}
+                    animation="pulse-fast 1.2s ease-in-out infinite"
+                  >
+                    <Icon as={MdCheckCircle} color="blue.500" _dark={{ color: "blue.300" }} boxSize={4} />
+                    <Text fontSize='sm' fontWeight="700" bgGradient="linear(to-r, blue.500, purple.500)" bgClip="text" textTransform="uppercase" letterSpacing="widest">
+                      Analyzing & Generating...
+                    </Text>
+                  </HStack>
+                ) : (
+                  <Box h="24px" mt={3} />
+                )}
               </VStack>
             </VStack>
           )}
@@ -763,27 +778,29 @@ function MainPage() {
       </VStack>
 
       {/* --- CTA --- */}
-      <VStack mt={40} mb={16} w="full" px={4} gap={8} textAlign="center">
-        <Heading size="2xl" fontWeight="900" letterSpacing="tighter" color="gray.900" _dark={{ color: "white" }}>
-          Ready to land more interviews?
-        </Heading>
-        <Button 
-          size="lg" 
-          bg="blue.600" 
-          color="white" 
-          _hover={{ bg: "blue.700", transform: "translateY(-4px)", boxShadow: "xl" }} 
-          _dark={{ bg: "blue.500", color: "white", _hover: { bg: "blue.400", transform: "translateY(-4px)", boxShadow: "xl" } }}
-          h={16} 
-          px={12} 
-          borderRadius="full" 
-          fontWeight="800"
-          fontSize="lg"
-          transition="all 0.2s"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-          Try Now! Try it for free 3 credits.
-        </Button>
-      </VStack>
+      {!user && (
+        <VStack mt={40} mb={16} w="full" px={4} gap={8} textAlign="center">
+          <Heading size="2xl" fontWeight="900" letterSpacing="tighter" color="gray.900" _dark={{ color: "white" }}>
+            Ready to land more interviews?
+          </Heading>
+          <Button 
+            size="lg" 
+            bg="blue.600" 
+            color="white" 
+            _hover={{ bg: "blue.700", transform: "translateY(-4px)", boxShadow: "xl" }} 
+            _dark={{ bg: "blue.500", color: "white", _hover: { bg: "blue.400", transform: "translateY(-4px)", boxShadow: "xl" } }}
+            h={16} 
+            px={12} 
+            borderRadius="full" 
+            fontWeight="800"
+            fontSize="lg"
+            transition="all 0.2s"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            Try Now! Try it for free 3 credits.
+          </Button>
+        </VStack>
+      )}
 
       <LeaveATip
         isOpen={isOpen}

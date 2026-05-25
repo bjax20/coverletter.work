@@ -38,7 +38,7 @@ export default function ProfilePage({ user }: { user: User }) {
           <HStack w="full" justify="space-between" align="flex-end" flexWrap="wrap" gap={4}>
             <VStack align="start" gap={1}>
               <Heading size="xl" fontWeight="800" letterSpacing="tight" color="gray.900" _dark={{ color: "white" }}>
-                Your Workspace
+                Welcome, {user.username || user.email?.split('@')[0] || 'User'}! 👋
               </Heading>
               <Text color="gray.500" fontSize="md">
                 Manage your account, credits, and career tools.
@@ -146,8 +146,8 @@ export default function ProfilePage({ user }: { user: User }) {
                 </Button>
                 <List spacing={4} mt={2} color="gray.600" _dark={{ color: "gray.300" }}>
                   <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">5 ATS-Optimized Cover Letters</Text></ListItem>
-                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Tailored tone matching</Text></ListItem>
-                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Premium Inline Editing tools</Text></ListItem>
+                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Unlimited AI Inline Editing</Text></ListItem>
+                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Advanced Keyword & Tone Matching</Text></ListItem>
                 </List>
               </VStack>
             </GridItem>
@@ -180,8 +180,8 @@ export default function ProfilePage({ user }: { user: User }) {
                 </Button>
                 <List spacing={4} mt={2} color="gray.100" _dark={{ color: "gray.200" }}>
                   <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="green.400" mt={1} /> <Text fontSize="sm" fontWeight="500">20 ATS-Optimized Cover Letters</Text></ListItem>
-                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="green.400" mt={1} /> <Text fontSize="sm" fontWeight="500">Platform-Specific Tuning (Upwork, LinkedIn, etc.)</Text></ListItem>
-                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="green.400" mt={1} /> <Text fontSize="sm" fontWeight="500">Advanced Keyword Matching</Text></ListItem>
+                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="green.400" mt={1} /> <Text fontSize="sm" fontWeight="500">Unlimited AI Inline Editing</Text></ListItem>
+                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="green.400" mt={1} /> <Text fontSize="sm" fontWeight="500">Advanced Keyword & Tone Matching</Text></ListItem>
                 </List>
               </VStack>
             </GridItem>
@@ -210,8 +210,8 @@ export default function ProfilePage({ user }: { user: User }) {
                 </Button>
                 <List spacing={4} mt={2} color="gray.600" _dark={{ color: "gray.300" }}>
                   <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">45 ATS-Optimized Cover Letters</Text></ListItem>
-                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Priority Generation Speed</Text></ListItem>
-                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Full Keyword Extraction</Text></ListItem>
+                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Unlimited AI Inline Editing</Text></ListItem>
+                  <ListItem display="flex" alignItems="flex-start"><ListIcon as={IoCheckmarkCircle} color="gray.900" _dark={{ color: "gray.300" }} mt={1} /> <Text fontSize="sm" fontWeight="500">Advanced Keyword & Tone Matching</Text></ListItem>
                 </List>
               </VStack>
             </GridItem>
